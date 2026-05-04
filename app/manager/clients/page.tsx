@@ -27,7 +27,7 @@ export default function ClientsPage() {
       const clientsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       setClients(clientsData);
     });
     return () => unsubscribe();

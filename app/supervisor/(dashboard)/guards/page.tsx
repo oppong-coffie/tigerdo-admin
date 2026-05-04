@@ -29,7 +29,7 @@ export default function SupervisorGuardsPage() {
       const guardsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       
       const supervisorID = localStorage.getItem("supervisorID");
       if (supervisorID) {
@@ -44,7 +44,7 @@ export default function SupervisorGuardsPage() {
       const clientsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       setClients(clientsData);
     });
 
