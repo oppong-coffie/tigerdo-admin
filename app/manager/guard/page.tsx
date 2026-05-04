@@ -30,7 +30,7 @@ export default function GuardsPage() {
       const guardsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       
       const currentManagerID = localStorage.getItem("managerID");
       if (currentManagerID) {
@@ -44,7 +44,7 @@ export default function GuardsPage() {
       const supsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       
       const currentManagerID = localStorage.getItem("managerID");
       if (currentManagerID) {
@@ -58,7 +58,7 @@ export default function GuardsPage() {
       const clientsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       setClients(clientsData);
     });
 

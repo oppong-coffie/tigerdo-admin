@@ -26,7 +26,7 @@ export default function SupervisorsPage() {
       const supervisorsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as any[];
       const currentManagerID = localStorage.getItem("managerID");
       if (currentManagerID) {
         setSupervisors(supervisorsData.filter(s => s.managerID === currentManagerID));
