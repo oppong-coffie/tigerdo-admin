@@ -8,7 +8,7 @@ import { Shield, Lock, Mail, ArrowRight, Loader2, Eye, EyeOff } from "lucide-rea
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function SupervisorLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,17 +24,16 @@ export default function LoginPage() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      const adminDoc = await getDoc(doc(db, "admins", userCredential.user.uid));
-      if (adminDoc.exists()) {
-        const data = adminDoc.data();
-        localStorage.setItem("managerID", userCredential.user.uid);
-        localStorage.setItem("managerName", data.name || "Manager");
-        localStorage.setItem("companyName", data.companyName || "");
+      const supervisorDoc = await getDoc(doc(db, "supervisors", userCredential.user.uid));
+      if (supervisorDoc.exists()) {
+        const data = supervisorDoc.data();
+        localStorage.setItem("supervisorID", userCredential.user.uid);
+        localStorage.setItem("managerID", data.managerID || "");
       } else {
-        localStorage.setItem("managerID", userCredential.user.uid);
+        localStorage.setItem("supervisorID", userCredential.user.uid);
       }
 
-      router.push("/manager");
+      router.push("/supervisor/home");
     } catch (err: any) {
       console.error("Login error:", err);
       if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
@@ -62,9 +61,9 @@ export default function LoginPage() {
             <Shield className="w-8 h-8 text-black" strokeWidth={2.5} />
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-2 uppercase tracking-widest">
-            TIGER<span className="text-red-600">DO</span> ADMIN
+            TIGER<span className="text-red-600">DO</span> SUPERVISOR
           </h1>
-          <p className="text-zinc-500 text-sm font-medium">Restricted Access Portal</p>
+          <p className="text-zinc-500 text-sm font-medium">Field Command Portal</p>
         </div>
 
         {/* Card */}
@@ -84,7 +83,7 @@ export default function LoginPage() {
               {/* Email Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1" htmlFor="email">
-                  Operator Email
+                  Supervisor Email
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600 group-focus-within:text-red-500 transition-colors" />
@@ -92,7 +91,7 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     required
-                    placeholder="name@agency.com"
+                    placeholder="supervisor@tigerdo.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-black/40 border border-zinc-800 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-red-600/10 focus:border-red-600 transition-all placeholder:text-zinc-700"
@@ -150,9 +149,7 @@ export default function LoginPage() {
 
           <p className="mt-8 text-center text-zinc-600 text-xs font-medium uppercase tracking-wider">
             No clearance?{" "}
-            <Link href="/register" className="text-red-500 hover:text-red-400 font-black transition-colors">
-              Initialize Account
-            </Link>
+            <span className="text-red-500 font-black">Contact Administrator</span>
           </p>
         </div>
 
