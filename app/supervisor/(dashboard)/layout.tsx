@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, AlertTriangle, FileText, Settings, Menu, X, ShieldCheck } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { LayoutDashboard, Users, LogOut, Menu, X, ShieldCheck } from 'lucide-react';
+import { auth } from '@/lib/firebase';
 
 const SidebarItem = ({ href, icon: Icon, label, active, onClick }: { href: string, icon: any, label: string, active: boolean, onClick?: () => void }) => (
   <Link 
@@ -27,12 +28,22 @@ export default function SupervisorLayout({
 }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      localStorage.removeItem("supervisorID");
+      localStorage.removeItem("managerID");
+      router.push("/supervisor");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   const menuItems = [
     { href: '/supervisor/home', icon: LayoutDashboard, label: 'Sector Hub' },
     { href: '/supervisor/guards', icon: Users, label: 'My Guards' },
-    { href: '/supervisor/alerts', icon: AlertTriangle, label: 'Sector Alerts' },
-    { href: '/supervisor/reports', icon: FileText, label: 'Briefings' },
   ];
 
   return (
@@ -73,7 +84,13 @@ export default function SupervisorLayout({
         </nav>
 
         <div className="pt-6 border-t border-red-900/10">
-          <SidebarItem href="/supervisor/settings" icon={Settings} label="Ops Settings" active={pathname === '/supervisor/settings'} />
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 text-gray-400 hover:bg-red-950/20 hover:text-red-400 cursor-pointer text-left"
+          >
+            <LogOut className="w-6 h-6 text-gray-500 group-hover:text-red-400" />
+            <span className="font-bold tracking-tight text-lg">Log Out</span>
+          </button>
         </div>
       </aside>
 
@@ -104,7 +121,16 @@ export default function SupervisorLayout({
               ))}
             </nav>
             <div className="pt-6 border-t border-red-900/10">
-              <SidebarItem href="/supervisor/settings" icon={Settings} label="Ops Settings" active={pathname === '/supervisor/settings'} onClick={() => setIsMobileMenuOpen(false)} />
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 text-gray-400 hover:bg-red-950/20 hover:text-red-400 cursor-pointer text-left"
+              >
+                <LogOut className="w-6 h-6 text-gray-500 group-hover:text-red-400" />
+                <span className="font-bold tracking-tight text-lg">Log Out</span>
+              </button>
             </div>
           </aside>
         </div>
